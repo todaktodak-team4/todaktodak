@@ -6,7 +6,7 @@ class RememberSerializer(ModelSerializer):
     class Meta:
         model = rememberTree
         fields = ['id', 'treeName', 'myName', 'flowerType', 'growth_period']
-
+       
 
 class PhotoSerializer(ModelSerializer):
     class Meta:

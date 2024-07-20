@@ -10,7 +10,7 @@ def user_photo_upload_to(instance, filename):
 class rememberTree(models.Model): 
     treeName = models.CharField(max_length=20)
     myName = models.CharField(max_length=100, null=False, default='토닥토닥') 
-    flowerType = models.CharField(max_length=20, null= False, default='')
+    flowerType = models.CharField(max_length=20, null=True, blank=True, default='')
     growth_period = models.DateField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='trees')
 
