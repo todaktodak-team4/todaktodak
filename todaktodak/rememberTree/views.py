@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from .models import rememberTree,Photo, Question, UserQuestionAnswer
-from .serializers import RememberSerializer,PhotoSerializer,QuestionSerializer
+from .serializers import RememberSerializer,PhotoSerializer,QuestionSerializer,AnswerSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -165,7 +165,16 @@ class DailyQuestionAPIView(APIView):
         except Question.DoesNotExist:
             return Response({"detail": "질문을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         
-        # 사용자의 답변을 저장
-        UserQuestionAnswer.objects.create(user=user, question=question, answer_text=answer_text, date_answered=today)
+    
+     # 사용자의 답변을 저장
+        answer = UserQuestionAnswer.objects.create(
+            user=user, 
+            question=question, 
+            answer_text=answer_text, 
+            date_answered=today
+        )
 
-        return Response({"detail": "Answer recorded successfully."}, status=status.HTTP_201_CREATED)
+        # 답변을 직렬화
+        serializer = AnswerSerializer(answer)
+        
+        return Response({"detail": "Answer recorded successfully.", "answer": serializer.data}, status=status.HTTP_201_CREATED)
