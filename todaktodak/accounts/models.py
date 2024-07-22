@@ -16,6 +16,7 @@ class CustomUser(AbstractUser):
     profile = models.ImageField(upload_to=profile_image_upload_to, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True)
     address = models.CharField(max_length=128, null=True)
+    date_joined = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.username
