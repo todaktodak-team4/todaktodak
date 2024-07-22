@@ -2,11 +2,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from .models import rememberTree,Photo
-from .serializers import RememberSerializer,PhotoSerializer
+from .models import rememberTree,Photo, Question, UserQuestionAnswer
+from .serializers import RememberSerializer,PhotoSerializer,QuestionSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.utils import timezone
+from datetime import timedelta
+import random
 
 #APIView 사용 : HTTP request에 대한 처리
 #TreeAPIView : 기억나무 심기 view
@@ -57,7 +60,7 @@ class TreeAPIView(APIView):
         tree.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
+#PhotoAPIView : 기억나무 앨범 view
 class PhotoAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -110,3 +113,59 @@ class PhotoAPIView(APIView):
         photo = get_object_or_404(Photo, pk=pk, remember_tree=tree)
         photo.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+
+# 기억나무 질문 view
+class DailyQuestionAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    # 질문 타입과 주기 설정
+    QUESTION_TYPES = ['DENIAL', 'ANGER', 'BARGAINING', 'DEPRESSION', 'ACCEPTANCE']
+    PERIOD_DAYS = 18
+
+    def get(self, request):
+        user = request.user
+        today = timezone.now().date()
+        date_joined = user.date_joined
+
+        # 가입일과 오늘 날짜 사이의 차이 계산
+        day_count = (today - date_joined).days
+
+        # 18일 주기를 기준으로 질문 타입 결정
+        period_index = (day_count // self.PERIOD_DAYS) % len(self.QUESTION_TYPES)
+        question_type = self.QUESTION_TYPES[period_index]
+
+        # 오늘 이미 답변이 있는지 확인
+        answered_questions = UserQuestionAnswer.objects.filter(user=user, date_answered=today).values_list('question_id', flat=True)
+
+        # 해당 타입의 질문을 랜덤으로 반환 (이미 답변한 질문은 제외)
+        questions = Question.objects.filter(question_type=question_type).exclude(id__in=answered_questions)
+        if not questions:
+            return Response({"detail": "오늘 받을 수 있는 질문이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        question = random.choice(questions)
+        serializer = QuestionSerializer(question)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        today = timezone.now().date()
+        user = request.user
+
+        # 오늘 날짜에 이미 답변이 있는지 확인
+        if UserQuestionAnswer.objects.filter(user=user, date_answered=today).exists():
+            return Response({"detail": "오늘 이미 답변 완료하셨습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        question_id = request.data.get('question_id')
+        answer_text = request.data.get('answer_text')
+
+        try:
+            question = Question.objects.get(pk=question_id)
+        except Question.DoesNotExist:
+            return Response({"detail": "질문을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # 사용자의 답변을 저장
+        UserQuestionAnswer.objects.create(user=user, question=question, answer_text=answer_text, date_answered=today)
+
+        return Response({"detail": "Answer recorded successfully."}, status=status.HTTP_201_CREATED)
