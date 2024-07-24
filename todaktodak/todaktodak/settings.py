@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # app
     'accounts',
     'rememberTree',
+    'memorialHall',
 
     #django rest framework
     'rest_framework',
@@ -156,6 +157,9 @@ REST_FRAMEWORK = {
 	'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
 	'djangorestframework_camel_case.parser.CamelCaseJSONParser',
 	),
+    #pagination 관련 설정
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 6,
 }
 
 CORS_ORIGIN_ALLOW_ALL = True 
