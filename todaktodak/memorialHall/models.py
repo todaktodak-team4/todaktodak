@@ -2,6 +2,9 @@ from django.db import models
 from accounts.models import CustomUser
 import uuid
 
+def get_thumbnail_upload_path(instance, filename):
+    return f'thumbnail/{instance.name}/{filename}'
+
 #헌화 공간 신청
 class MemorialHall(models.Model):
     name = models.CharField(verbose_name="추모관 이름", max_length=100)
@@ -9,7 +12,7 @@ class MemorialHall(models.Model):
     info = models.CharField(verbose_name="소개글", max_length=50)
     public = models.BooleanField(verbose_name="공개", default=True)
     private = models.BooleanField(verbose_name="비공개", default=False)
-    thumbnail = models.ImageField(verbose_name="대표사진", upload_to='thumbnail', blank=True, null=True)
+    thumbnail = models.ImageField(verbose_name="대표사진", upload_to=get_thumbnail_upload_path, blank=True, null=True)
     participation = models.ManyToManyField(CustomUser, related_name='participation_halls', blank=True)
     # 고유한 토큰 필드 추가, 기본값을 null로 설정 : private가 true일때만 token 생성
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=True, blank=True)  
