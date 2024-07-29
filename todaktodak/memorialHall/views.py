@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import MemorialHall, Wreath, Message
 from .serializers import MemorialHallSerializer, WreathSerializer, MessageSeralizer
 from rest_framework.viewsets import ModelViewSet
-from django.db.models import Q
+from django.db.models import Q, Count
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -17,7 +17,9 @@ class MemorialHallViewSet(ModelViewSet) :
     
     #검색
     def get_queryset(self):
-        queryset = MemorialHall.objects.all().order_by('-date')
+        queryset = MemorialHall.objects.annotate(
+            wreath_count=Count('wreath')
+        ).order_by('-wreath_count', '-date')
         search_keyword = self.request.GET.get('q', '')
 
         if search_keyword:
@@ -30,7 +32,9 @@ class MemorialHallViewSet(ModelViewSet) :
     @action(detail=False, methods=['get'], url_path='my-participation')
     def my_participation(self, request):
         user = request.user
-        participated_halls = self.queryset.filter(participants=user).order_by('-date')
+        participated_halls = self.queryset.filter(participation=user).annotate(
+            wreath_count=Count('wreath')
+        ).order_by('-wreath_count', '-date')
         serializer = self.get_serializer(participated_halls, many=True)
         return Response(serializer.data)
     
