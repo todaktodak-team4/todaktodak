@@ -178,3 +178,31 @@ class DailyQuestionAPIView(APIView):
         serializer = AnswerSerializer(answer)
         
         return Response({"detail": "Answer recorded successfully.", "answer": serializer.data}, status=status.HTTP_201_CREATED)
+    
+
+# 오늘의 질문과 답변 가져오기
+class GetTodayAnswersAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        today = timezone.now().date()
+
+        answers = UserQuestionAnswer.objects.filter(user=user, date_answered=today)
+        if not answers:
+            return Response({"detail": "오늘 답변이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        question_ids = answers.values_list('question_id', flat=True)
+        questions = Question.objects.filter(id__in=question_ids)
+
+        answer_with_question = []
+        for answer in answers:
+            question = questions.get(id=answer.question_id)
+            answer_with_question.append({
+                'question': QuestionSerializer(question).data,
+                'answer_text': answer.answer_text,
+                'date_answered': answer.date_answered
+            })
+
+        return Response(answer_with_question)
