@@ -35,11 +35,11 @@ class Wreath(models.Model):
     hall = models.ForeignKey(MemorialHall, on_delete=models.CASCADE)
     nickname = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(verbose_name="작성일", auto_now_add=True)
-    todak = models.ManyToManyField(CustomUser, related_name='todak_wreath')
-    sympathize = models.ManyToManyField(CustomUser, related_name='sym_wreath')
-    sad = models.ManyToManyField(CustomUser, related_name='sad_wreath')
-    commemorate = models.ManyToManyField(CustomUser, related_name='com_wreath')
-    together = models.ManyToManyField(CustomUser, related_name='together_wreath')
+    todak = models.ManyToManyField(CustomUser, related_name='todak_wreath', blank=True)
+    sympathize = models.ManyToManyField(CustomUser, related_name='sym_wreath', blank=True)
+    sad = models.ManyToManyField(CustomUser, related_name='sad_wreath', blank=True)
+    commemorate = models.ManyToManyField(CustomUser, related_name='com_wreath', blank=True)
+    together = models.ManyToManyField(CustomUser, related_name='together_wreath', blank=True)
     
     def __str__(self):
         return self.name
@@ -50,11 +50,11 @@ class Message(models.Model):
     hall = models.ForeignKey(MemorialHall, on_delete=models.CASCADE)
     nickname = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(verbose_name="작성일", auto_now_add=True)
-    todak = models.ManyToManyField(CustomUser, related_name='todak_mse')
-    sympathize = models.ManyToManyField(CustomUser, related_name='sym_msg')
-    sad = models.ManyToManyField(CustomUser, related_name='sad_msg')
-    commemorate = models.ManyToManyField(CustomUser, related_name='com_msg')
-    together = models.ManyToManyField(CustomUser, related_name='together_msg')
+    todak = models.ManyToManyField(CustomUser, related_name='todak_mse', blank=True)
+    sympathize = models.ManyToManyField(CustomUser, related_name='sym_msg', blank=True)
+    sad = models.ManyToManyField(CustomUser, related_name='sad_msg', blank=True)
+    commemorate = models.ManyToManyField(CustomUser, related_name='com_msg', blank=True)
+    together = models.ManyToManyField(CustomUser, related_name='together_msg', blank=True)
     
     def __str__(self):
         return self.content
