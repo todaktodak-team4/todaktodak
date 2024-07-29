@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-p$+la)u=wrqgew*u@t7+zsmxqt)jaguu0j!e_(i$-!6$n6nbx0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -47,6 +47,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'rest_framework_simplejwt',
+
+
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",    
 ]
 
 MIDDLEWARE = [
@@ -58,7 +65,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware', 
-	'django.middleware.common.CommonMiddleware', 
+	'django.middleware.common.CommonMiddleware',
+    "allauth.account.middleware.AccountMiddleware", 
 ]
 
 ROOT_URLCONF = 'todaktodak.urls'
@@ -143,9 +151,11 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
 REST_FRAMEWORK = {
+    
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     # CamelCaseJSON 관련 설정
 	'DEFAULT_RENDERER_CLASSES': (
@@ -171,4 +181,12 @@ CORS_ALLOW_METHODS = [
 	'PATCH',
 	'POST',
 	'PUT',
+]
+
+ACCOUNT_EMAIL_REQUIRED = True            # email 필드 사용 o
+ACCOUNT_USERNAME_REQUIRED = True         # username 필드 사용 o
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
 ]
