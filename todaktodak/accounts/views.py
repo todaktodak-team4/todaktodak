@@ -63,6 +63,32 @@ class ProfileUpdateView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
 
+#토큰으로 사용자 아이디 가져오기
+class GetUserIdFromTokenView(APIView):
+    permission_classes = [IsAuthenticated]  
+
+    def get(self, request, *args, **kwargs):
+       
+        auth_header = request.headers.get('Authorization')
+        if auth_header is None:
+            return Response({"error": "Authorization header missing."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        token_key = auth_header.split(' ')[1] if ' ' in auth_header else auth_header
+
+        try:
+            
+            token = Token.objects.get(key=token_key)
+            
+            user = token.user
+            
+            return Response({"user_id": user.id}, status=status.HTTP_200_OK)
+        except Token.DoesNotExist:
+            return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 secret_file = os.path.join(BASE_DIR, "secrets.json")
 

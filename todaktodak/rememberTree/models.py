@@ -63,7 +63,7 @@ class UserQuestionAnswer(models.Model):
 
 #편지모델
 class Letters(models.Model):
-    content = models.TextField(max_length=700, null = False)
+    content = models.TextField(max_length=780, null = False)
     remember_tree = models.ForeignKey(rememberTree, on_delete=models.CASCADE, related_name='letters')
     writer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='letters')
     uploaded_at = models.DateTimeField(auto_now_add=True)
