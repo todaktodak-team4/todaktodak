@@ -30,3 +30,4 @@ class UserAdditionalInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['nickname', 'profile', 'phone', 'address']
+
