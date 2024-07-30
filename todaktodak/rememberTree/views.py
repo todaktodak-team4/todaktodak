@@ -98,7 +98,7 @@ class PhotoAPIView(APIView):
         data = {
             'rememberPhoto': request.data.get('remember_photo'),
             'description': request.data.get('description'),
-            'rememberDate': request.data.get('remember_date'),
+            'rememberDate': request.data.get('rememberDate'),
             'comment': request.data.get('comment'),
             'remember_tree': tree.id,
         }
