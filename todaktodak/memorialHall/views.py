@@ -95,69 +95,85 @@ class WreathViewSet(ModelViewSet):
         return Response(serializer.data)
     
     # 토닥토닥
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['get', 'post'])
     def todak(self, request, pk=None, memorialHall_id=None):
         wreath = get_object_or_404(Wreath, pk=pk)
         user = request.user
         
-        if user in wreath.todak.all():
-            wreath.todak.remove(user)
-            return Response({'status': 'todak removed'})
-        else:
-            wreath.todak.add(user)
-            return Response({'status': 'todak added'})
-
+        if request.method == 'POST':
+            if user in wreath.todak.all():
+                wreath.todak.remove(user)
+                return Response({'status': 'todak removed'})
+            else:
+                wreath.todak.add(user)
+                return Response({'status': 'todak added'})
+        elif request.method == 'GET':
+            total_todak_count = wreath.todak.count()
+            return Response({'total_todak': total_todak_count})
     # 공감해요
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['get', 'post'])
     def sympathize(self, request, pk=None, memorialHall_id=None):
         wreath = get_object_or_404(Wreath, pk=pk)
         user = request.user
         
-        if user in wreath.sympathize.all():
-            wreath.sympathize.remove(user)
-            return Response({'status': 'sympathize removed'})
-        else:
-            wreath.sympathize.add(user)
-            return Response({'status': 'sympathize added'})
-
+        if request.method == 'POST':
+            if user in wreath.sympathize.all():
+                wreath.sympathize.remove(user)
+                return Response({'status': 'sympathize removed'})
+            else:
+                wreath.sympathize.add(user)
+                return Response({'status': 'sympathize added'})
+        elif request.method == 'GET':
+            total_sympathize_count = wreath.sympathize.count()
+            return Response({'total_sympathize': total_sympathize_count})
     # 슬퍼요
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['get', 'post'])
     def sad(self, request, pk=None, memorialHall_id=None):
         wreath = get_object_or_404(Wreath, pk=pk)
         user = request.user
         
-        if user in wreath.sad.all():
-            wreath.sad.remove(user)
-            return Response({'status': 'sad removed'})
-        else:
-            wreath.sad.add(user)
-            return Response({'status': 'sad added'})
-
+        if request.method == 'POST':
+            if user in wreath.sad.all():
+                wreath.sad.remove(user)
+                return Response({'status': 'sad removed'})
+            else:
+                wreath.sad.add(user)
+                return Response({'status': 'sad added'})
+        elif request.method == 'GET':
+            total_sad_count = wreath.sad.count()
+            return Response({'total_sad': total_sad_count})
     # 추모해요
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['get', 'post'])
     def commemorate(self, request, pk=None, memorialHall_id=None):
         wreath = get_object_or_404(Wreath, pk=pk)
         user = request.user
         
-        if user in wreath.commemorate.all():
-            wreath.commemorate.remove(user)
-            return Response({'status': 'commemorate removed'})
-        else:
-            wreath.commemorate.add(user)
-            return Response({'status': 'commemorate added'})
-
+        if request.method == 'POST':
+            if user in wreath.commemorate.all():
+                wreath.commemorate.remove(user)
+                return Response({'status': 'commemorate removed'})
+            else:
+                wreath.commemorate.add(user)
+                return Response({'status': 'commemorate added'})
+        elif request.method == 'GET':
+            total_commemorate_count = wreath.commemorate.count()
+            return Response({'total_commemorate': total_commemorate_count})
     # 함께해요
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['get', 'post'])
     def together(self, request, pk=None, memorialHall_id=None):
         wreath = get_object_or_404(Wreath, pk=pk)
         user = request.user
         
-        if user in wreath.together.all():
-            wreath.together.remove(user)
-            return Response({'status': 'together removed'})
-        else:
-            wreath.together.add(user)
-            return Response({'status': 'together added'})
+        if request.method == 'POST':
+            if user in wreath.together.all():
+                wreath.together.remove(user)
+                return Response({'status': 'together removed'})
+            else:
+                wreath.together.add(user)
+                return Response({'status': 'together added'})
+        elif request.method == 'GET':
+            total_together_count = wreath.together.count()
+            return Response({'total_together': total_together_count})
     
 #추모글
 class MessageViewSet(ModelViewSet):
@@ -174,65 +190,88 @@ class MessageViewSet(ModelViewSet):
     #memorialHall로 MemorialHall과 foriegnkey연결시켰더니 인식 못하는 오류!!
     
     #토닥토닥
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['get', 'post'])
     def todak(self, request, pk=None, memorialHall_id=None):
         message = get_object_or_404(Message, pk=pk) 
         user = request.user
         
-        if user in message.todak.all():
-            message.todak.remove(user)
-            return Response({'status': 'todak removed'})
-        else:
-            message.todak.add(user)
-            return Response({'status': 'todak added'})
+        if request.method == 'POST':
+            if user in message.todak.all():
+                message.todak.remove(user)
+                return Response({'status': 'todak removed'})
+            else:
+                message.todak.add(user)
+                return Response({'status': 'todak added'})
+        elif request.method == 'GET':
+            total_todak_count = message.todak.count()
+            return Response({'total_todak': total_todak_count})
+        
     #공감해요 
-    @action(detail=True, methods=['post'])
-    def sympathizek(self, request, pk=None, memorialHall_id=None):
+    @action(detail=True, methods=['get', 'post'])
+    def sympathize(self, request, pk=None, memorialHall_id=None):
         message = get_object_or_404(Message, pk=pk)
         user = request.user
         
-        if user in message.sympathize.all():
-            message.sympathize.remove(user)
-            return Response({'status': 'sympathize removed'})
-        else:
-            message.sympathize.add(user)
-            return Response({'status': 'sympathize added'})
+        if request.method == 'POST':
+            if user in message.sympathize.all():
+                message.sympathize.remove(user)
+                return Response({'status': 'sympathize removed'})
+            else:
+                message.sympathize.add(user)
+                return Response({'status': 'sympathize added'})
+        elif request.method == 'GET':
+            total_sympathize_count = message.sympathize.count()
+            return Response({'total_sympathize': total_sympathize_count})
+
     #슬퍼요
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['get', 'post'])
     def sad(self, request, pk=None, memorialHall_id=None):
         message = get_object_or_404(Message, pk=pk)
         user = request.user
         
-        if user in message.sad.all():
-            message.sad.remove(user)
-            return Response({'status': 'sad removed'})
-        else:
-            message.sad.add(user)
-            return Response({'status': 'sad added'})
-    #추모해요
-    @action(detail=True, methods=['post'])
+        if request.method == 'POST':
+            if user in message.sad.all():
+                message.sad.remove(user)
+                return Response({'status': 'sad removed'})
+            else:
+                message.sad.add(user)
+                return Response({'status': 'sad added'})
+        elif request.method == 'GET':
+            total_sad_count = message.sad.count()
+            return Response({'total_sad': total_sad_count})
+        
+    # 추모해요
+    @action(detail=True, methods=['get', 'post'])
     def commemorate(self, request, pk=None, memorialHall_id=None):
         message = get_object_or_404(Message, pk=pk)
         user = request.user
         
-        if user in message.commemorate.all():
-            message.commemorate.remove(user)
-            return Response({'status': 'commemorate removed'})
-        else:
-            message.commemorate.add(user)
-            return Response({'status': 'commemorate added'})
+        if request.method == 'POST':
+            if user in message.commemorate.all():
+                message.commemorate.remove(user)
+                return Response({'status': 'commemorate removed'})
+            else:
+                message.commemorate.add(user)
+                return Response({'status': 'commemorate added'})
+        elif request.method == 'GET':
+            total_commemorate_count = message.commemorate.count()
+            return Response({'total_commemorate': total_commemorate_count})
     #함께해요
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['get', 'post'])
     def together(self, request, pk=None, memorialHall_id=None):
         message = get_object_or_404(Message, pk=pk)
         user = request.user
         
-        if user in message.together.all():
-            message.together.remove(user)
-            return Response({'status': 'together removed'})
-        else:
-            message.together.add(user)
-            return Response({'status': 'together added'})
+        if request.method == 'POST':
+            if user in message.together.all():
+                message.together.remove(user)
+                return Response({'status': 'together removed'})
+            else:
+                message.together.add(user)
+                return Response({'status': 'together added'})
+        elif request.method == 'GET':
+            total_together_count = message.together.count()
+            return Response({'total_together': total_together_count})
      
     #추모글 + 헌화의 한마디 목록조회   
     def list(self, request, memorialHall_id=None):
