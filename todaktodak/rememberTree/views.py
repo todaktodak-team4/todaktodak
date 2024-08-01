@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from .models import rememberTree,Photo, Question, UserQuestionAnswer
-from .serializers import RememberSerializer,PhotoSerializer,QuestionSerializer,AnswerSerializer
+from .models import rememberTree,Photo, Question, UserQuestionAnswer, Letters
+from .serializers import RememberSerializer,PhotoSerializer,QuestionSerializer,AnswerSerializer,LetterSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -98,7 +98,7 @@ class PhotoAPIView(APIView):
         data = {
             'rememberPhoto': request.data.get('remember_photo'),
             'description': request.data.get('description'),
-            'rememberDate': request.data.get('remember_date'),
+            'rememberDate': request.data.get('rememberDate'),
             'comment': request.data.get('comment'),
             'remember_tree': tree.id,
         }
@@ -206,3 +206,29 @@ class GetTodayAnswersAPIView(APIView):
             })
 
         return Response(answer_with_question)
+    
+class LettersAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, tree_id, pk=None):
+        tree = get_object_or_404(rememberTree, pk=tree_id)
+        if pk:
+            letter = get_object_or_404(Letters, pk=pk, remember_tree=tree)
+            serializer = LetterSerializer(letter)
+        else:
+            letters = Letters.objects.filter(remember_tree=tree)
+            serializer = LetterSerializer(letters, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, tree_id):
+        tree = get_object_or_404(rememberTree, pk=tree_id)
+
+        serializer = LetterSerializer(data=request.data, context={
+            'request': request,
+            'remember_tree': tree
+        })
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -59,3 +59,14 @@ class UserQuestionAnswer(models.Model):
 
     def __str__(self):
         return f"Answer by {self.user.username} to {self.question.question_text} on {self.date_answered}"
+    
+
+#편지모델
+class Letters(models.Model):
+    content = models.TextField(max_length=780, null = False)
+    remember_tree = models.ForeignKey(rememberTree, on_delete=models.CASCADE, related_name='letters')
+    writer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='letters')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Letters {self.id} by {self.writer.username} for {self.remember_tree.treeName}"
