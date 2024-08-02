@@ -51,7 +51,7 @@ class MemorialHallViewSet(ModelViewSet) :
             wreath_count=Count('wreath'),
             message_count=Count('message')
         ).order_by('-wreath_count', '-date')
-        serializer = self.get_serializer(participated_halls, many=True)
+        serializer = self.get_serializer(participated_halls, many=True) 
         return Response(serializer.data)
     
     # 토큰을 통해 비공개 추모관 접근
@@ -60,12 +60,17 @@ class MemorialHallViewSet(ModelViewSet) :
         token = request.query_params.get('token')
         hall = get_object_or_404(MemorialHall, pk=pk, token=token)
         serializer = self.get_serializer(hall)
-        return Response(serializer.data)
+        return Response(serializer.data) 
 
-    # 추모관 참여하기
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['get', 'post'], permission_classes=[IsAuthenticated])
     def participate(self, request, pk=None):
         hall = get_object_or_404(MemorialHall, pk=pk)
+        
+        if request.method == 'GET':
+            user = request.user
+            is_participated = hall.participation.filter(id=user.id).exists()
+            return Response({'is_participated': is_participated})
+        
         if hall.private:
             token = request.data.get('token')
             if not token or token != str(hall.token):
@@ -216,7 +221,6 @@ class MessageViewSet(ModelViewSet):
         elif request.method == 'GET':
             total_todak_count = message.todak.count()
             return Response({'total_todak': total_todak_count})
-        
     #공감해요 
     @action(detail=True, methods=['get', 'post'])
     def sympathize(self, request, pk=None, memorialHall_id=None):
@@ -233,7 +237,6 @@ class MessageViewSet(ModelViewSet):
         elif request.method == 'GET':
             total_sympathize_count = message.sympathize.count()
             return Response({'total_sympathize': total_sympathize_count})
-
     #슬퍼요
     @action(detail=True, methods=['get', 'post'])
     def sad(self, request, pk=None, memorialHall_id=None):
@@ -250,7 +253,6 @@ class MessageViewSet(ModelViewSet):
         elif request.method == 'GET':
             total_sad_count = message.sad.count()
             return Response({'total_sad': total_sad_count})
-        
     # 추모해요
     @action(detail=True, methods=['get', 'post'])
     def commemorate(self, request, pk=None, memorialHall_id=None):
