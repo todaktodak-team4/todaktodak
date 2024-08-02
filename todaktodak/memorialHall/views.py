@@ -16,13 +16,20 @@ class MemorialHallViewSet(ModelViewSet) :
     serializer_class = MemorialHallSerializer
     pagination_class = MemorialHallPagination
     authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        # 검색 기능이 포함된 list 액션에 대해 인증을 허용하지 않음
+        if self.action == 'list':
+            return [AllowAny()]
+        return super().get_permissions()
     
     #검색
     def get_queryset(self):
-        queryset = MemorialHall.objects.annotate(
+        queryset = MemorialHall.objects.filter(approved=True).annotate(
             wreath_count=Count('wreath'),
             message_count=Count('message')
         ).order_by('-wreath_count', '-date')
+        
         search_keyword = self.request.GET.get('q', '')
 
         if search_keyword:

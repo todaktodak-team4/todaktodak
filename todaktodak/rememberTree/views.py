@@ -18,13 +18,20 @@ class TreeAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, pk=None):
+    def get(self, request, pk=None, user_id=None):
         if pk:
+            # 특정 기억나무 조회
             tree = get_object_or_404(rememberTree, pk=pk, user=request.user)
             serializer = RememberSerializer(tree)
+        elif user_id:
+            # 사용자의 ID로 기억나무 조회
+            trees = rememberTree.objects.filter(user_id=user_id)
+            serializer = RememberSerializer(trees, many=True)
         else:
+            # 인증된 사용자가 만든 기억나무 조회
             trees = rememberTree.objects.filter(user=request.user)
             serializer = RememberSerializer(trees, many=True)
+        
         return Response(serializer.data)
 
     def post(self, request):
@@ -141,8 +148,13 @@ class DailyQuestionAPIView(APIView):
         # 오늘 이미 답변이 있는지 확인
         answered_questions = UserQuestionAnswer.objects.filter(user=user, date_answered=today).values_list('question_id', flat=True)
 
+       
+        if answered_questions:
+            return Response({"detail": "오늘 받을 수 있는 질문이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        
         # 해당 타입의 질문을 랜덤으로 반환 (이미 답변한 질문은 제외)
         questions = Question.objects.filter(question_type=question_type).exclude(id__in=answered_questions)
+        
         if not questions:
             return Response({"detail": "오늘 받을 수 있는 질문이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
