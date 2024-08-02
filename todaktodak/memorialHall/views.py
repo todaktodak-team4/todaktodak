@@ -17,10 +17,11 @@ class MemorialHallViewSet(ModelViewSet) :
     
     #검색
     def get_queryset(self):
-        queryset = MemorialHall.objects.annotate(
+        queryset = MemorialHall.objects.filter(approved=True).annotate(
             wreath_count=Count('wreath'),
             message_count=Count('message')
         ).order_by('-wreath_count', '-date')
+        
         search_keyword = self.request.GET.get('q', '')
 
         if search_keyword:

@@ -14,8 +14,9 @@ class MemorialHall(models.Model):
     private = models.BooleanField(verbose_name="비공개", default=False)
     thumbnail = models.ImageField(verbose_name="대표사진", upload_to=get_thumbnail_upload_path, blank=True, null=True)
     participation = models.ManyToManyField(CustomUser, related_name='participation_halls', blank=True)
-    # 고유한 토큰 필드 추가, 기본값을 null로 설정 : private가 true일때만 token 생성
-    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=True, blank=True)  
+    # 비공개 토큰 : private가 true일때만 token 생성
+    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=True, blank=True)
+    approved = models.BooleanField(default=False) #관리자 수락
     
     def __str__(self) :
         return self.name
