@@ -13,7 +13,7 @@ message_router.register('message', MessageViewSet, basename='message')
 
 urlpatterns = [
     path('', include(memorialHall_router.urls)),
-    path('memorialHall/<int:pk>/participate/', MemorialHallViewSet.as_view({'post': 'participate'}), name='memorialhall-participate'),
+    path('memorialHall/<int:pk>/participate/', MemorialHallViewSet.as_view({'get': 'participate', 'post': 'participate'}), name='memorialhall-participate'),
     path('memorialHall/<int:pk>/unparticipate/', MemorialHallViewSet.as_view({'post': 'unparticipate'}), name='memorialhall-unparticipate'),
     path('memorialHall/<int:pk>/access/', MemorialHallViewSet.as_view({'get': 'access_private_hall'}), name='memorialhall-access-private'),
     path('memorialHall/<int:memorialHall_id>/', include(wreath_router.urls)),
