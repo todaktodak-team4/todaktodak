@@ -10,10 +10,11 @@ class RememberSerializer(ModelSerializer):
        
 
 class PhotoSerializer(ModelSerializer):
+
     class Meta:
         model = Photo
         fields =['id', 'rememberPhoto','description','rememberDate','comment','remember_tree']
-
+    
 
 class QuestionSerializer(ModelSerializer):
     class Meta:

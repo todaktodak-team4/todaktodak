@@ -11,6 +11,8 @@ import os, json
 from django.core.exceptions import ImproperlyConfigured
 from pathlib import Path
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+
 
 class RegisterStepOne(APIView):
     permission_classes = [AllowAny]
@@ -42,19 +44,46 @@ class RegisterStepTwo(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CustomAuthToken(ObtainAuthToken):
+# class CustomAuthToken(ObtainAuthToken):
+#     permission_classes = [AllowAny]
+
+#     def get(self, request, *args, **kwargs):
+#         return Response({"detail": "This endpoint only accepts POST requests."})
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.serializer_class(data=request.data, context={'request': request})
+#         serializer.is_valid(raise_exception=True)
+#         user = serializer.validated_data['user']
+#         token, created = Token.objects.get_or_create(user=user)
+#         return Response({'token': token.key, 'user_id': user.pk, 'email': user.email})
+    # Login View
+class CustomAuthToken(TokenObtainPairView):
     permission_classes = [AllowAny]
 
-    def get(self, request, *args, **kwargs):
-        return Response({"detail": "This endpoint only accepts POST requests."})
+# Refresh Token View
+class CustomTokenRefreshView(TokenRefreshView):
+    permission_classes = [AllowAny]
+
+# Verify Token View
+class CustomTokenVerifyView(TokenVerifyView):
+    permission_classes = [AllowAny]
+
+# Logout View #refresh Token 무효화
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'user_id': user.pk, 'email': user.email})
-    
+        refresh_token = request.data.get('refresh_token')
+        if not refresh_token:
+            return Response({"error": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()  # Blacklists the refresh token
+            return Response({"message": "Logout successful."}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 class ProfileUpdateView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserAdditionalInfoSerializer
@@ -64,30 +93,36 @@ class ProfileUpdateView(generics.UpdateAPIView):
         return self.request.user
 
 #토큰으로 사용자 아이디 가져오기
+# class GetUserIdFromTokenView(APIView):
+#     permission_classes = [IsAuthenticated]  
+
+#     def get(self, request, *args, **kwargs):
+       
+#         auth_header = request.headers.get('Authorization')
+#         if auth_header is None:
+#             return Response({"error": "Authorization header missing."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+#         token_key = auth_header.split(' ')[1] if ' ' in auth_header else auth_header
+
+#         try:
+            
+#             token = Token.objects.get(key=token_key)
+            
+#             user = token.user
+            
+#             return Response({"user_id": user.id}, status=status.HTTP_200_OK)
+#         except Token.DoesNotExist:
+#             return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+#         except Exception as e:
+#             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 class GetUserIdFromTokenView(APIView):
-    permission_classes = [IsAuthenticated]  
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-       
-        auth_header = request.headers.get('Authorization')
-        if auth_header is None:
-            return Response({"error": "Authorization header missing."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        
-        token_key = auth_header.split(' ')[1] if ' ' in auth_header else auth_header
-
-        try:
-            
-            token = Token.objects.get(key=token_key)
-            
-            user = token.user
-            
-            return Response({"user_id": user.id}, status=status.HTTP_200_OK)
-        except Token.DoesNotExist:
-            return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+        user_id = request.user.id
+        return Response({"user_id": user_id}, status=status.HTTP_200_OK)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 secret_file = os.path.join(BASE_DIR, "secrets.json")

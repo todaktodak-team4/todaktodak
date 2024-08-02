@@ -8,12 +8,14 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .pagenation import MemorialHallPagination, MessagePagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 #추모관 페이지네이션(한페이지 6개 추모관)
 class MemorialHallViewSet(ModelViewSet) :
     queryset = MemorialHall.objects.all()
     serializer_class = MemorialHallSerializer
     pagination_class = MemorialHallPagination
+    authentication_classes = [JWTAuthentication]
     
     #검색
     def get_queryset(self):
@@ -78,7 +80,8 @@ class WreathViewSet(ModelViewSet):
     queryset = Wreath.objects.all()
     serializer_class = WreathSerializer
     pagination_class = None  # 페이지네이션을 사용하지 않도록 설정
-    
+    authentication_classes = [JWTAuthentication]
+
     def perform_create(self, serializer):
         serializer.save(nickname=self.request.user)
         
@@ -164,7 +167,8 @@ class MessageViewSet(ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     pagination_class = MessagePagination
-
+    authentication_classes = [JWTAuthentication]
+    
     def perform_create(self, serializer):
         serializer.save(nickname = self.request.user)
     

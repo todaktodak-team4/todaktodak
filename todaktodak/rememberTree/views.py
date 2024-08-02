@@ -5,7 +5,8 @@ from django.shortcuts import get_object_or_404
 from .models import rememberTree,Photo, Question, UserQuestionAnswer, Letters
 from .serializers import RememberSerializer,PhotoSerializer,QuestionSerializer,AnswerSerializer,LetterSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
+# from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.utils import timezone
 from datetime import timedelta
@@ -14,15 +15,15 @@ import random
 #APIView 사용 : HTTP request에 대한 처리
 #TreeAPIView : 기억나무 심기 view
 class TreeAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk=None):
         if pk:
-            tree = get_object_or_404(rememberTree, pk=pk)
+            tree = get_object_or_404(rememberTree, pk=pk, user=request.user)
             serializer = RememberSerializer(tree)
         else:
-            trees = rememberTree.objects.all()
+            trees = rememberTree.objects.filter(user=request.user)
             serializer = RememberSerializer(trees, many=True)
         return Response(serializer.data)
 
@@ -62,7 +63,7 @@ class TreeAPIView(APIView):
 
 #PhotoAPIView : 기억나무 앨범 view
 class PhotoAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
 
@@ -118,7 +119,7 @@ class PhotoAPIView(APIView):
 
 # 기억나무 질문 view
 class DailyQuestionAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 질문 타입과 주기 설정
@@ -182,7 +183,7 @@ class DailyQuestionAPIView(APIView):
 
 # 오늘의 질문과 답변 가져오기
 class GetTodayAnswersAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -208,7 +209,7 @@ class GetTodayAnswersAPIView(APIView):
         return Response(answer_with_question)
     
 class LettersAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, tree_id, pk=None):
