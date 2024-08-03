@@ -9,7 +9,7 @@ def get_thumbnail_upload_path(instance, filename):
 class MemorialHall(models.Model):
     name = models.CharField(verbose_name="추모관 이름", max_length=100)
     date = models.DateTimeField(verbose_name="추모일")
-    info = models.CharField(verbose_name="소개글", max_length=50)
+    info = models.CharField(verbose_name="소개글", max_length=70)
     public = models.BooleanField(verbose_name="공개", default=True)
     private = models.BooleanField(verbose_name="비공개", default=False)
     thumbnail = models.ImageField(verbose_name="대표사진", upload_to=get_thumbnail_upload_path, blank=True, null=True)
@@ -31,7 +31,7 @@ class MemorialHall(models.Model):
 #헌화하기 - 결제하기 페이지와 연결 필요
 class Wreath(models.Model):
     donation = models.IntegerField(verbose_name="헌화금액", default=1000)
-    comment = models.CharField(verbose_name="헌화 한마디", max_length=50, blank=True, null=True)
+    comment = models.CharField(verbose_name="헌화 한마디", max_length=70, blank=True, null=True)
     name = models.CharField(verbose_name="성함", max_length=10)
     hall = models.ForeignKey(MemorialHall, on_delete=models.CASCADE)
     nickname = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

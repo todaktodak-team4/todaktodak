@@ -31,3 +31,38 @@ class UserAdditionalInfoSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['nickname', 'profile', 'phone', 'address']
 
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False, validators=[validate_password])
+    new_username = serializers.CharField(required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ['new_username', 'password', 'nickname', 'profile', 'phone', 'address']
+        
+    def validate(self, attrs):
+        # 비밀번호 확인 없이 비밀번호만 확인
+        if 'password' in attrs:
+            validate_password(attrs['password'])
+        return attrs
+
+    def update(self, instance, validated_data):
+        # 비밀번호 업데이트
+        password = validated_data.pop('password', None)
+        if password:
+            instance.set_password(password)
+        
+        # 아이디 업데이트
+        new_username = validated_data.pop('new_username', None)
+        if new_username:
+            instance.username = new_username
+        
+        # 기타 필드 업데이트
+        instance.nickname = validated_data.get('nickname', instance.nickname)
+        instance.profile = validated_data.get('profile', instance.profile)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.address = validated_data.get('address', instance.address)
+        
+        instance.save()
+        return instance
