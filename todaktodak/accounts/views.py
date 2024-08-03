@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from .models import CustomUser
-from .serializers import UserBasicInfoSerializer, UserAdditionalInfoSerializer
+from .serializers import UserBasicInfoSerializer, UserAdditionalInfoSerializer,UserUpdateSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 import os, json
@@ -86,7 +86,7 @@ class LogoutView(APIView):
 
 class ProfileUpdateView(generics.UpdateAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = UserAdditionalInfoSerializer
+    serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
@@ -123,6 +123,38 @@ class GetUserIdFromTokenView(APIView):
     def get(self, request, *args, **kwargs):
         user_id = request.user.id
         return Response({"user_id": user_id}, status=status.HTTP_200_OK)
+
+
+#토큰으로 사용자 정보 가져오기
+class GetUserInfoFromTokenView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+
+        user = request.user
+        # `request.user`는 JWT 인증을 통해 자동으로 설정됩니다.
+        user_id = request.user.id
+        username = request.user.username
+        email = request.user.email
+        nickname = request.user.nickname
+        # 프로필 파일이 있을 경우 URL을 반환하고, 없을 경우 빈 문자열을 반환
+        profile = getattr(user.profile, 'url', '') if user.profile else ''
+
+        address = request.user.address
+        date_joined = request.user.date_joined
+        # 선택적으로 추가적인 사용자 정보도 포함할 수 있습니다.
+        user_info = {
+            "user_id": user_id,
+            "username": username,
+            "email": email,
+            "nickname": nickname,
+            "profile": profile,
+            "address": address,
+            "date_joined":date_joined,
+        }
+        
+        return Response(user_info, status=status.HTTP_200_OK)
+    
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 secret_file = os.path.join(BASE_DIR, "secrets.json")

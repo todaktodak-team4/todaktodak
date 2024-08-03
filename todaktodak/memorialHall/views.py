@@ -95,6 +95,13 @@ class WreathViewSet(ModelViewSet):
     pagination_class = None  # 페이지네이션을 사용하지 않도록 설정
     authentication_classes = [JWTAuthentication]
 
+
+    def get_permissions(self):
+        # 'list', 'retrieve', 'get' 액션에 대해 인증을 허용하지 않음
+        if self.action in ['list', 'retrieve', 'get']:
+            return [AllowAny()]
+        return super().get_permissions()
+    
     def perform_create(self, serializer):
         serializer.save(nickname=self.request.user)
         
