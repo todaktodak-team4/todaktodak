@@ -135,40 +135,43 @@ class DailyQuestionAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        today = timezone.now().date()
+        today = timezone.localtime(timezone.now()).date()  # 로컬 시간대의 날짜 가져오기
         date_joined = user.date_joined
 
         # 가입일과 오늘 날짜 사이의 차이 계산
         day_count = (today - date_joined).days
+        print(f"오늘 날짜 : {today}")
+        print(f"가입일: {date_joined}")
+        print(f"가입일과 오늘 날짜 사이의 차이 계산: {day_count}")
 
         # 18일 주기를 기준으로 질문 타입 결정
         period_index = (day_count // self.PERIOD_DAYS) % len(self.QUESTION_TYPES)
         question_type = self.QUESTION_TYPES[period_index]
-
+        print(f"질문 타입: {question_type}")
         # 오늘 이미 답변이 있는지 확인
         answered_questions = UserQuestionAnswer.objects.filter(user=user, date_answered=today).values_list('question_id', flat=True)
 
        
         if answered_questions:
-            return Response({"detail": "오늘 받을 수 있는 질문이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "오늘 받을 수 있는 질문이 없습니다1."}, status=status.HTTP_404_NOT_FOUND)
         
         # 해당 타입의 질문을 랜덤으로 반환 (이미 답변한 질문은 제외)
         questions = Question.objects.filter(question_type=question_type).exclude(id__in=answered_questions)
         
         if not questions:
-            return Response({"detail": "오늘 받을 수 있는 질문이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "오늘 받을 수 있는 질문이 없습니다2."}, status=status.HTTP_404_NOT_FOUND)
 
         question = random.choice(questions)
         serializer = QuestionSerializer(question)
         return Response(serializer.data)
     
     def post(self, request):
-        today = timezone.now().date()
+        today = timezone.localtime(timezone.now()).date()  # 로컬 시간대의 날짜 가져오기
         user = request.user
 
         # 오늘 날짜에 이미 답변이 있는지 확인
         if UserQuestionAnswer.objects.filter(user=user, date_answered=today).exists():
-            return Response({"detail": "오늘 이미 답변 완료하셨습니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "오늘 이미 답변 완료하셨습니다3."}, status=status.HTTP_400_BAD_REQUEST)
 
         question_id = request.data.get('question_id')
         answer_text = request.data.get('answer_text')
@@ -176,7 +179,7 @@ class DailyQuestionAPIView(APIView):
         try:
             question = Question.objects.get(pk=question_id)
         except Question.DoesNotExist:
-            return Response({"detail": "질문을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "질문을 찾을 수 없습니다4."}, status=status.HTTP_404_NOT_FOUND)
         
     
      # 사용자의 답변을 저장
@@ -200,7 +203,7 @@ class GetTodayAnswersAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        today = timezone.now().date()
+        today = timezone.localtime(timezone.now()).date()  # 로컬 시간대의 날짜 가져오기
 
         answers = UserQuestionAnswer.objects.filter(user=user, date_answered=today)
         if not answers:
@@ -209,6 +212,10 @@ class GetTodayAnswersAPIView(APIView):
         question_ids = answers.values_list('question_id', flat=True)
         questions = Question.objects.filter(id__in=question_ids)
 
+        print(f"로그인한 사용자: {user}")
+        print(f"오늘 날짜: {today}")
+        print(f"답변 목록: {answers}")
+        print(f"질문 목록: {questions}")
         answer_with_question = []
         for answer in answers:
             question = questions.get(id=answer.question_id)

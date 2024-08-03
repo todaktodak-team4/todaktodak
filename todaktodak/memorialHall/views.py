@@ -19,9 +19,10 @@ class MemorialHallViewSet(ModelViewSet) :
 
     def get_permissions(self):
         # 검색 기능이 포함된 list 액션에 대해 인증을 허용하지 않음
-        if self.action == 'list':
+        if self.action in ['list', 'retrieve']:
             return [AllowAny()]
         return super().get_permissions()
+
     
     #검색
     def get_queryset(self):
@@ -196,6 +197,12 @@ class MessageViewSet(ModelViewSet):
     serializer_class = MessageSerializer
     pagination_class = MessagePagination
     authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        # 'list', 'retrieve', 'get' 액션에 대해 인증을 허용하지 않음
+        if self.action in ['list', 'retrieve', 'get']:
+            return [AllowAny()]
+        return super().get_permissions()
     
     def perform_create(self, serializer):
         serializer.save(nickname = self.request.user)
