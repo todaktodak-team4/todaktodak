@@ -38,6 +38,9 @@ class RegisterStepTwo(APIView):
         except CustomUser.DoesNotExist:
             return Response({"error": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
         
+           # 전달된 데이터를 로그로 출력
+        print("Request Data:", request.data)
+        
         serializer = UserAdditionalInfoSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -92,31 +95,7 @@ class ProfileUpdateView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
 
-#토큰으로 사용자 아이디 가져오기
-# class GetUserIdFromTokenView(APIView):
-#     permission_classes = [IsAuthenticated]  
-
-#     def get(self, request, *args, **kwargs):
-       
-#         auth_header = request.headers.get('Authorization')
-#         if auth_header is None:
-#             return Response({"error": "Authorization header missing."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        
-#         token_key = auth_header.split(' ')[1] if ' ' in auth_header else auth_header
-
-#         try:
-            
-#             token = Token.objects.get(key=token_key)
-            
-#             user = token.user
-            
-#             return Response({"user_id": user.id}, status=status.HTTP_200_OK)
-#         except Token.DoesNotExist:
-#             return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-#         except Exception as e:
-#             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+#토큰으로 사용자 아이디 가져오기    
 class GetUserIdFromTokenView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -137,10 +116,13 @@ class GetUserInfoFromTokenView(APIView):
         username = request.user.username
         email = request.user.email
         nickname = request.user.nickname
+        phone = request.user.phone
         # 프로필 파일이 있을 경우 URL을 반환하고, 없을 경우 빈 문자열을 반환
         profile = getattr(user.profile, 'url', '') if user.profile else ''
 
         address = request.user.address
+        postalAddress=request.user.postal_address
+        zoneCode = request.user.zone_code
         date_joined = request.user.date_joined
         # 선택적으로 추가적인 사용자 정보도 포함할 수 있습니다.
         user_info = {
@@ -149,8 +131,11 @@ class GetUserInfoFromTokenView(APIView):
             "email": email,
             "nickname": nickname,
             "profile": profile,
+            "postalAddress":postalAddress,
+            "zoneCode":zoneCode,
             "address": address,
             "date_joined":date_joined,
+            "phone":phone,
         }
         
         return Response(user_info, status=status.HTTP_200_OK)

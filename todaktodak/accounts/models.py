@@ -15,6 +15,8 @@ class CustomUser(AbstractUser):
     nickname = models.CharField(max_length=10)
     profile = models.ImageField(upload_to=profile_image_upload_to, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True)
+    postal_address = models.CharField(max_length=128, null=True)
+    zone_code = models.CharField(max_length=128, null=True)
     address = models.CharField(max_length=128, null=True)
     date_joined = models.DateField(auto_now_add=True)
 
