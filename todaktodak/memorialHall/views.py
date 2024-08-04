@@ -2,13 +2,15 @@ from django.shortcuts import render
 from .models import MemorialHall, Wreath, Message
 from .serializers import MemorialHallSerializer, WreathSerializer, MessageSerializer
 from rest_framework.viewsets import ModelViewSet
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Value, BooleanField
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .pagenation import MemorialHallPagination, MessagePagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import status 
+from rest_framework.test import APIRequestFactory 
 
 #추모관 페이지네이션(한페이지 6개 추모관)
 class MemorialHallViewSet(ModelViewSet) :
@@ -26,17 +28,24 @@ class MemorialHallViewSet(ModelViewSet) :
     
     #검색
     def get_queryset(self):
-        queryset = MemorialHall.objects.filter(approved=True).annotate(
+        user = self.request.user
+        queryset = MemorialHall.objects.filter(approved=True, public=True).annotate(
             wreath_count=Count('wreath'),
             message_count=Count('message')
         ).order_by('-wreath_count', '-date')
-        
-        search_keyword = self.request.GET.get('q', '')
 
+        if user.is_authenticated:
+            participated_ids = user.participation_halls.values_list('id', flat=True)
+            queryset = queryset.annotate(
+                is_participated=Value(True, output_field=BooleanField())
+            ).filter(id__in=participated_ids) | queryset.annotate(
+                is_participated=Value(False, output_field=BooleanField())
+            ).exclude(id__in=participated_ids)
+
+        search_keyword = self.request.GET.get('q', '')
         if search_keyword:
-            queryset = queryset.filter(
-                Q(name__icontains=search_keyword)
-            )
+            queryset = queryset.filter(Q(name__icontains=search_keyword))
+
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
@@ -44,15 +53,30 @@ class MemorialHallViewSet(ModelViewSet) :
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
     
+    # 추모관 생성 시 신청한 사용자를 자동으로 participation에 추가
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        user = self.request.user
+        instance.participation.add(user)  # 추모관 생성자를 participation에 추가
+        
+        # participate 메서드를 POST로 호출하여 참여 상태를 저장
+        factory = APIRequestFactory()
+        response = self.participate(self.request, pk=instance.id)
+        # 디버깅을 위한 응답 로그 추가
+        print(f'Participate response: {response.data}')
+        return Response({'status': 'participated', 'id': instance.id}, status=status.HTTP_201_CREATED)  # 응답 추가
+        
     #내가 참여한 추모관
     @action(detail=False, methods=['get'], url_path='my-participation')
     def my_participation(self, request):
         user = request.user
-        participated_halls = self.queryset.filter(participation=user).annotate(
+        queryset = MemorialHall.objects.filter(approved=True).annotate(
             wreath_count=Count('wreath'),
             message_count=Count('message')
         ).order_by('-wreath_count', '-date')
-        serializer = self.get_serializer(participated_halls, many=True) 
+
+        participated_halls = queryset.filter(participation=user)
+        serializer = self.get_serializer(participated_halls, many=True)
         return Response(serializer.data)
     
     # 토큰을 통해 비공개 추모관 접근
