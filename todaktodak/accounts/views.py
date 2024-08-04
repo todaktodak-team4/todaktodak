@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from .models import CustomUser
-from .serializers import UserBasicInfoSerializer, UserAdditionalInfoSerializer,UserUpdateSerializer
+from .serializers import UserBasicInfoSerializer, UserAdditionalInfoSerializer,UserUpdateSerializer,ProfileImageSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 import os, json
@@ -95,6 +95,23 @@ class ProfileUpdateView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
 
+
+class ProfileImageUpdateView(generics.UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = ProfileImageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def put(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"profile": serializer.data['profile']}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 #토큰으로 사용자 아이디 가져오기    
 class GetUserIdFromTokenView(APIView):
     permission_classes = [IsAuthenticated]

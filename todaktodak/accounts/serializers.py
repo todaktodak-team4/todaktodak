@@ -67,3 +67,16 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         instance.zone_code = validated_data.get('zone_code', instance.zone_code)
         instance.save()
         return instance
+
+
+class ProfileImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['profile']
+
+    def update(self, instance, validated_data):
+        profile = validated_data.get('profile', None)
+        if profile:
+            instance.profile = profile
+            instance.save()
+        return instance
