@@ -243,6 +243,14 @@ class MessageViewSet(ModelViewSet):
         return self.queryset.filter(hall=id).order_by('-created_at')
     #memorialHall로 MemorialHall과 foriegnkey연결시켰더니 인식 못하는 오류!!
     
+    # 내가 작성한 추모글만 확인 #연결된 추모관 제목만 가져와서 불러오도록
+    @action(detail=False, methods=['get'], url_path='my-messages')
+    def my_messages(self, request):
+        user = request.user
+        my_messages = self.queryset.filter(nickname=user).order_by('-created_at')
+        serializer = self.get_serializer(my_messages, many=True)
+        return Response(serializer.data)
+    
     #토닥토닥
     @action(detail=True, methods=['get', 'post'])
     def todak(self, request, pk=None, memorialHall_id=None):

@@ -28,7 +28,7 @@ class MemorialHall(models.Model):
             self.token = None  # 비공개가 아닌 경우 토큰을 제거
         super(MemorialHall, self).save(*args, **kwargs)
 
-#헌화하기 - 결제하기 페이지와 연결 필요
+#헌화하기
 class Wreath(models.Model):
     donation = models.IntegerField(verbose_name="헌화금액", default=1000)
     comment = models.CharField(verbose_name="헌화 한마디", max_length=70, blank=True, null=True)

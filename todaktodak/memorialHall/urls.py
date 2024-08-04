@@ -17,5 +17,7 @@ urlpatterns = [
     path('memorialHall/<int:pk>/unparticipate/', MemorialHallViewSet.as_view({'post': 'unparticipate'}), name='memorialhall-unparticipate'),
     path('memorialHall/<int:pk>/access/', MemorialHallViewSet.as_view({'get': 'access_private_hall'}), name='memorialhall-access-private'),
     path('memorialHall/<int:memorialHall_id>/', include(wreath_router.urls)),
+    path('wreath/my-wreaths/', WreathViewSet.as_view({'get': 'my_wreaths'}), name='wreath-my-wreaths'),
     path('memorialHall/<int:memorialHall_id>/', include(message_router.urls)),
+    path('message/my-messages/', MessageViewSet.as_view({'get': 'my_messages'}), name='message-my-messages'),
 ]

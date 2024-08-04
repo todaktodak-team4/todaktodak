@@ -25,10 +25,10 @@ class MemorialHallSerializer(ModelSerializer) :
 class WreathSerializer(ModelSerializer) :
     nickname = serializers.ReadOnlyField(source = 'nickname.nickname')
     profile = serializers.SerializerMethodField()
-    
+    hall_name = serializers.ReadOnlyField(source='hall.name')
     class Meta :
         model = Wreath
-        fields = ['id', 'donation', 'comment', 'name', 'hall', 'nickname', 'profile', 'created_at']
+        fields = ['id', 'donation', 'comment', 'name', 'hall', 'hall_name', 'nickname', 'profile', 'created_at']
         
     def get_profile(self, obj):
         if obj.nickname.profile and hasattr(obj.nickname.profile, 'url'):
@@ -38,10 +38,11 @@ class WreathSerializer(ModelSerializer) :
 class MessageSerializer(ModelSerializer) :
     nickname = serializers.ReadOnlyField(source = 'nickname.nickname')
     profile = serializers.SerializerMethodField()
+    hall_name = serializers.ReadOnlyField(source = 'hall.name')
     
     class Meta :
         model = Message
-        fields = ['id', 'content', 'hall', 'nickname', 'profile', 'created_at']
+        fields = ['id', 'content', 'hall', 'hall_name', 'nickname', 'profile', 'created_at']
         
     def get_profile(self, obj):
         if obj.nickname.profile and hasattr(obj.nickname.profile, 'url'):
