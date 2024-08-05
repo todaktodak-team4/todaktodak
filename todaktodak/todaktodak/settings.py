@@ -26,7 +26,7 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 # SECRET_KEY = 'django-insecure-p$+la)u=wrqgew*u@t7+zsmxqt)jaguu0j!e_(i$-!6$n6nbx0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -79,7 +79,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'staticfiles'),
+            os.path.join(BASE_DIR, 'client'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
