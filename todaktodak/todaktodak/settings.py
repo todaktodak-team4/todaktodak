@@ -198,7 +198,11 @@ CORS_ALLOW_METHODS = [
 	'POST',
 	'PUT',
 ]
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # 로컬 개발 서버 주소
+    "http://3.38.125.151",     # 배포 서버 주소
+    # 추가적으로 다른 도메인도 필요에 따라 추가할 수 있습니다.
+]
 ACCOUNT_EMAIL_REQUIRED = True            # email 필드 사용 o
 ACCOUNT_USERNAME_REQUIRED = True         # username 필드 사용 o
 ACCOUNT_AUTHENTICATION_METHOD = "email"
