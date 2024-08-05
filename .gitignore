@@ -139,7 +139,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-myvenv/
+todak/
 
 # Spyder project settings
 .spyderproject
