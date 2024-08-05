@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin4242/', admin.site.urls),
     path('accounts/', include('accounts.urls')), # 추가
     path('',include('rememberTree.urls')),
     path('', include('memorialHall.urls')),
