@@ -8,12 +8,12 @@ from django.views.static import serve
 
 urlpatterns = [
     path('admin4242/', admin.site.urls),
-    path('api/accounts/', include('accounts.urls')),
-    path('api/',include('rememberTree.urls')),
-    path('api/', include('memorialHall.urls')),
+    path('accounts/', include('accounts.urls')),
+    path('',include('rememberTree.urls')),
+    path('', include('memorialHall.urls')),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}), 
     re_path(r'^assets/(?P<path>.*)$', serve, { 'document_root': settings.STATIC_ROOT }),
-    path('api/', TemplateView.as_view(template_name='index.html')),
+    path('', TemplateView.as_view(template_name='index.html')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
