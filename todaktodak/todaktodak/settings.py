@@ -79,7 +79,7 @@ ROOT_URLCONF = 'todaktodak.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['client'],
+         'DIRS': ['client'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,9 +144,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
-        # 실제 static 파일은 모두 client 측에서 소유
-        os.path.join(BASE_DIR, 'client/static')
-    ]
+    os.path.join(BASE_DIR, 'client/static')
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -196,7 +196,11 @@ CORS_ALLOW_METHODS = [
 	'POST',
 	'PUT',
 ]
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # 로컬 개발 서버 주소
+    "http://3.38.125.151",     # 배포 서버 주소
+    # 추가적으로 다른 도메인도 필요에 따라 추가할 수 있습니다.
+]
 ACCOUNT_EMAIL_REQUIRED = True            # email 필드 사용 o
 ACCOUNT_USERNAME_REQUIRED = True         # username 필드 사용 o
 ACCOUNT_AUTHENTICATION_METHOD = "email"
