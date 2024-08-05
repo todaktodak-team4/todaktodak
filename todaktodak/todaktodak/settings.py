@@ -79,7 +79,9 @@ ROOT_URLCONF = 'todaktodak.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['client'],
+         'DIRS': [
+            os.path.join(BASE_DIR, 'staticfiles'),
+         ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
