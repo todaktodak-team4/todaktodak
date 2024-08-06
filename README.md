@@ -47,8 +47,8 @@
           <td  align="center"><p>전체 서비스 기획</p><p>전체 UI 디자인</p></td>
           <td  align="center"><p>로그인 및 회원가입 프론트 개발</p><p>헌화 추모관, 헌화하기 프론트 개발</p></td>
           <td  align="center"><p>기억나무 관련 기능 프론트 개발</p></td>
-          <td  align="center"><p>로그인 및 회원가입 백 개발</p><p>기억나무 관련 기능 백 개발</p></td>
           <td  align="center"><p>헌화 추모관, 헌화하기 기능 백 개발</p><p></p></td>
+          <td  align="center"><p>로그인 및 회원가입 백 개발</p><p>기억나무 관련 기능 백 개발</p></td>
      </tr>
   </table>
 
@@ -58,12 +58,10 @@
     $ cd 2024-Herethon-4
     $ python -m venv myvenv
     $ source myvenv/Scripts/activate
-    $ pip install django
-    $ pip install pillow
-    $ pip install django-bootstrap4
+    $ pip install -r requirements.txt
+    $ cd todaktodak
     $ python manage.py makemigrations
     $ python manage.py migrate
-    $ cd herethon_Pro
     $ python manage.py runserver
   ```
   <hr/>
