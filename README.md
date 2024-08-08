@@ -12,8 +12,13 @@
 토닥토닥과 함께 같은 아픔을 겪은 사람들을 서로 보듬어주고, 그리운 대상을 추억하며 슬픔에 매몰되지 않도록 나 자신을 치유해나가세요.
 
 ![image](https://github.com/user-attachments/assets/fa47b619-4bf2-4a5e-a430-908131319dee)
+![image](https://github.com/user-attachments/assets/89a9f6e5-14bf-4737-a3ab-c5a616e7d440)
+![image](https://github.com/user-attachments/assets/4a9ca9fb-7495-4ddb-9606-34292f449367)
+![image](https://github.com/user-attachments/assets/57e92705-256f-4020-b4ce-b161332e98b1)
+![image](https://github.com/user-attachments/assets/74e3ea78-5f97-4a0e-986f-16a14c6ec800)
 
 
+- **배포 링크** : http://3.38.125.151/
 - **기술 스택**
 
   <span>프론트엔드: </span> <img src="https://img.shields.io/badge/html-E34F26?style=for-the-badge&logo=html5&logoColor=white"> <img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white"> <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
