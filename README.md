@@ -11,11 +11,14 @@
 또한 기억나무 섬에서는 오랫동안 기억하고 싶은 사람과의 추억을 앨범으로 간직하고, 편지를 보낼 수 있습니다.<br/> 다 자란 나무는 테라리움 형식으로 맞춤 제작 앨범과 함께 배송받아 보세요.<br/>
 토닥토닥과 함께 같은 아픔을 겪은 사람들을 서로 보듬어주고, 그리운 대상을 추억하며 슬픔에 매몰되지 않도록 나 자신을 치유해나가세요.
 
-![image](https://github.com/user-attachments/assets/fa47b619-4bf2-4a5e-a430-908131319dee)
-![image](https://github.com/user-attachments/assets/89a9f6e5-14bf-4737-a3ab-c5a616e7d440)
-![image](https://github.com/user-attachments/assets/4a9ca9fb-7495-4ddb-9606-34292f449367)
-![image](https://github.com/user-attachments/assets/57e92705-256f-4020-b4ce-b161332e98b1)
-![image](https://github.com/user-attachments/assets/74e3ea78-5f97-4a0e-986f-16a14c6ec800)
+| 토닥토닥 | 온라인 추모관 상세페이지 | 온라인 추모관  |
+|----------|----------|----------|
+| ![image1](https://github.com/user-attachments/assets/fa47b619-4bf2-4a5e-a430-908131319dee) | ![image2](https://github.com/user-attachments/assets/89a9f6e5-14bf-4737-a3ab-c5a616e7d440) | ![image3](https://github.com/user-attachments/assets/4a9ca9fb-7495-4ddb-9606-34292f449367) |
+
+| 기억나무 | 기억나무 |
+|----------|----------|
+| ![image4](https://github.com/user-attachments/assets/57e92705-256f-4020-b4ce-b161332e98b1) | ![image5](https://github.com/user-attachments/assets/74e3ea78-5f97-4a0e-986f-16a14c6ec800) |
+
 
 
 - **배포 링크** : http://3.38.125.151/
